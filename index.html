@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>My S3 Static Site</title>
+  <meta name="description" content="S3だけで配信してる静的サイトのサンプル" />
+  <style>
+    :root { color-scheme: light; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", sans-serif;
+      line-height: 1.6;
+      background: #f6f7fb;
+      color: #111;
+    }
+    header {
+      background: #111;
+      color: #fff;
+      padding: 28px 18px;
+    }
+    header .wrap { max-width: 980px; margin: 0 auto; }
+    h1 { margin: 0 0 6px; font-size: 22px; }
+    p { margin: 0; opacity: .9; }
+
+    main { padding: 18px; }
+    .wrap { max-width: 980px; margin: 0 auto; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid #e6e7ef;
+      border-radius: 12px;
+      padding: 14px;
+      box-shadow: 0 6px 18px rgba(0,0,0,.06);
+    }
+    .badge {
+      display: inline-block;
+      font-size: 12px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #eef2ff;
+      border: 1px solid #dbe3ff;
+      margin-bottom: 10px;
+    }
+    button {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #d8d9e4;
+      border-radius: 10px;
+      background: #fff;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    button:hover { background: #f3f4ff; }
+    code, pre {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 13px;
+    }
+    pre {
+      background: #0b1020;
+      color: #d7e1ff;
+      padding: 12px;
+      border-radius: 12px;
+      overflow: auto;
+      margin: 10px 0 0;
+    }
+    footer {
+      padding: 18px;
+      color: #444;
+      opacity: .85;
+    }
+    .muted { color:#555; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <h1>✅ S3 Static Website サンプル</h1>
+      <p>CloudFront無し / S3 Website Hosting だけで公開してる前提のサンプルページ</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap">
+      <div class="card">
+        <span class="badge">status</span>
+        <div id="status">Checking...</div>
+        <div class="muted">このページは外部通信なしで動く（＝S3だけでOK）</div>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <span class="badge">hello</span>
+          <div>ボタン押したらログに追記するだけのデモ。</div>
+          <div style="margin-top:10px;">
+            <button id="btn">ログに1行追加</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <span class="badge">tips</span>
+          <ul style="margin:0; padding-left: 18px;">
+            <li><b>index.html</b> を置く</li>
+            <li>Website hosting を ON</li>
+            <li>公開バケットポリシーを付ける</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <span class="badge">next</span>
+          <div>HTTPS / 認証 / WAF が欲しくなったら：</div>
+          <div style="margin-top:6px;"><b>S3 + CloudFront</b> に切り替えるのが定番。</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:14px;">
+        <span class="badge">log</span>
+        <pre id="log"></pre>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div class="muted">© <span id="year"></span> My Static Site</div>
+    </div>
+  </footer>
+
+  <script>
+    const statusEl = document.getElementById("status");
+    const logEl = document.getElementById("log");
+    const btn = document.getElementById("btn");
+
+    const now = new Date();
+    document.getElementById("year").textContent = String(now.getFullYear());
+
+    function log(line) {
+      const ts = new Date().toLocaleString();
+      logEl.textContent += `[${ts}] ${line}\n`;
+    }
+
+    // 表示確認（S3 Website Endpointだと http(s) の違いが見える）
+    const proto = location.protocol;
+    const host = location.host;
+    statusEl.textContent = `Loaded ✅  (${proto}//${host})`;
+    log("page loaded");
+    log(`userAgent: ${navigator.userAgent}`);
+
+    btn.addEventListener("click", () => {
+      log("button clicked");
+    });
+  </script>
+</body>
+</html>
