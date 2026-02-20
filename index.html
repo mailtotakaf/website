@@ -164,10 +164,9 @@
         </div>
     </main>
 
-    <iframe src="https://あなたのCloudFrontのURL"
-        style="position:fixed; bottom:20px; right:20px; width:400px; height:600px; border:none; z-index:99999;"
-        id="ai-chat-iframe">
-    </iframe>
+    <iframe src="https://drqh8ui0vax27.cloudfront.net/" id="ai-chat-iframe"
+        style="position:fixed; bottom:20px; right:20px; width:60px; height:60px; border:none; z-index:99999; transition: all 0.3s;"
+        allowtransparency="true" scrolling="no"> </iframe>
 
     <footer>
         <div class="wrap">
@@ -197,6 +196,32 @@
 
         btn.addEventListener("click", () => {
             log("button clicked");
+        });
+
+        const iframe = document.getElementById('ai-chat-iframe');
+        // window.addEventListener('message', (event) => {
+        //     console.log("Message received from Vue:", event.data);
+        //     // 届いたメッセージが 'open' か 'close' かでサイズを変更
+        //     if (event.data === 'open') {
+        //         iframe.style.width = '400px';
+        //         iframe.style.height = '600px';
+        //     } else if (event.data === 'close') {
+        //         iframe.style.width = '60px';  /* ボタンのサイズに縮小 */
+        //         iframe.style.height = '60px';
+        //     }
+        // });
+        window.addEventListener('message', (event) => {
+            console.log("Message received from Vue:", event.data);
+            const iframe = document.getElementById('ai-chat-iframe');
+
+            if (!iframe) return;
+
+            if (event.data === 'open') {
+                // .style.cssText を使うと、複数のプロパティを確実に上書きできます
+                iframe.style.cssText = "position:fixed; bottom:20px; right:20px; width:400px !important; height:600px !important; border:none; z-index:99999; transition: all 0.3s; background: transparent;";
+            } else if (event.data === 'close') {
+                iframe.style.cssText = "position:fixed; bottom:20px; right:20px; width:60px !important; height:60px !important; border:none; z-index:99999; transition: all 0.3s; background: transparent;";
+            }
         });
     </script>
 </body>
